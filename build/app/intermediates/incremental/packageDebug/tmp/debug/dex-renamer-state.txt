@@ -1,0 +1,4 @@
+#Fri Oct 18 16:41:17 BST 2019
+base.0=D\:\\flutterstuff\\source\\composersbygeography\\build\\app\\intermediates\\transforms\\dexMerger\\debug\\0
+path.0=classes.dex
+renamed.0=classes.dex
