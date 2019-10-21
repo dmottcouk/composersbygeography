@@ -1,4 +1,7 @@
+
 import 'package:flutter/material.dart';
+import '../pages/categories_description_screen.dart';
+
 
 class MusicPeriodCategoryItem extends StatelessWidget {
   final String categorytitle;
@@ -8,7 +11,6 @@ class MusicPeriodCategoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final screenwidth = MediaQuery.of(context).size.width;
 
     return ClipRRect(
@@ -20,17 +22,27 @@ class MusicPeriodCategoryItem extends StatelessWidget {
           //   builder: (ctx) => ProductDetailScreen(title),
           // ),
           //);
+          Navigator.of(context).pushNamed(
+            CategoriesDescriptionScreen.routeName,
+            arguments: categorytitle,
+          );
         },
         child: GridTile(
-          child: Image.asset(
-            'assets/images/$assetimage',
-            fit: BoxFit.cover,
+          child: Hero(
+            tag: categorytitle,
+            child: Image.asset(
+              'assets/images/$assetimage',
+              fit: BoxFit.cover,
+            ),
           ),
           footer: GridTileBar(
             backgroundColor: Colors.black45,
+            leading: IconButton(icon: Icon(Icons.info), onPressed: () {}),
             title: Text(
               categorytitle,
-              style: screenwidth > 600 ? TextStyle(fontSize: 24) : TextStyle(fontSize: 14),
+              style: screenwidth > 600
+                  ? TextStyle(fontSize: 24)
+                  : TextStyle(fontSize: 14),
               textAlign: TextAlign.center,
             ),
           ),

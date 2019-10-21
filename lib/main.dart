@@ -1,6 +1,8 @@
 
+
 import 'package:flutter/material.dart';
 import './pages/tabs_screen.dart';
+import './pages/categories_description_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -16,6 +18,10 @@ class MyApp extends StatelessWidget {
         accentColor:  Colors.purple
       ),
       home: TabsScreen(),
+      routes: {
+        CategoriesDescriptionScreen.routeName: (ctx) => CategoriesDescriptionScreen(),
+
+      }
     );
   }
 }
