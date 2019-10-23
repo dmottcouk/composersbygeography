@@ -37,12 +37,12 @@ class MusicPeriodCategoryItem extends StatelessWidget {
           ),
           footer: GridTileBar(
             backgroundColor: Colors.black45,
-            leading: IconButton(icon: Icon(Icons.info), onPressed: () {}),
+           // leading: IconButton(icon: Icon(Icons.info), onPressed: () {}),
             title: Text(
               categorytitle,
               style: screenwidth > 600
                   ? TextStyle(fontSize: 24)
-                  : TextStyle(fontSize: 14),
+                  : TextStyle(fontSize: 12),
               textAlign: TextAlign.center,
             ),
           ),

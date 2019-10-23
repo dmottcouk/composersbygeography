@@ -19,7 +19,7 @@ class CategoriesDescriptionScreen extends StatelessWidget {
         // slivers are scrollable areas on the screen
         slivers: <Widget>[
           SliverAppBar(
-            expandedHeight: 400,
+            expandedHeight: 380,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(category),
@@ -40,7 +40,7 @@ class CategoriesDescriptionScreen extends StatelessWidget {
                 width: double.infinity,
                 child: Text(
                   CategoriesDescriptions.getCategoryDescription(category)
-                      .join('.'),
+                      .join('\n'),
                   textAlign: TextAlign.center,
                   softWrap: true,
                 ),
