@@ -3,6 +3,8 @@ import '../pages/composerslist_screen.dart';
 
 import '../widgets/categorieswidget.dart';
 import '../widgets/mapscreenwidget.dart';
+import '../helpers/overflowoptions.dart';
+import './enter_composer_screen.dart';
 
 class TabsScreen extends StatefulWidget {
   @override
@@ -38,18 +40,36 @@ class _TabsScreenState extends State<TabsScreen> {
               'Composers by Geography - ${_pages[_selectedPageIndex]["title"]}'),
           actions: <Widget>[
             IconButton(
-                icon: Icon(Icons.insert_chart),
-                onPressed: () {
-                  Navigator.of(context)
-                      .pushNamed(ComposersListScreen.routeName);
-                }),
+              icon: Icon(Icons.insert_chart),
+              onPressed: () {
+                Navigator.of(context).pushNamed(ComposersListScreen.routeName);
+              },
+            ),
+            PopupMenuButton(
+              onSelected: (value) {
+              if (value == OverflowOptions.enterdata) {
+                Navigator.of(context).pushNamed(EnterComposerScreen.routeName);
+              } else {
+                Navigator.of(context).pushNamed(ComposersListScreen.routeName);
+              }
+            }, 
+            itemBuilder: (BuildContext ctx) {
+              return OverflowOptions.options
+                  .map(
+                    (settingoption) => PopupMenuItem(
+                      value: settingoption,
+                      child: Text(settingoption),
+                    ),
+                  )
+                  .toList();
+            }),
           ]),
       body: _pages[_selectedPageIndex]['page'],
       bottomNavigationBar: BottomNavigationBar(
         onTap: _selectPage,
         backgroundColor: Theme.of(context).primaryColor,
         unselectedItemColor: Colors.black,
-        selectedItemColor: Theme.of(context).accentColor,
+        selectedItemColor: Theme.of(context).secondaryHeaderColor,
         currentIndex: _selectedPageIndex,
         // can also set selectedfontsize and unselectedfontsize
         ////type:BottomNavigationBarType.shifting,

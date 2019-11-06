@@ -1,3 +1,7 @@
+import 'package:composersbygeography/helpers/geocoder_helper.dart';
+
+import './placelocation.dart';
+
 class ComposerWithDart {
   String surname;
   String firstnames;
@@ -21,7 +25,81 @@ class ComposerWithDart {
     }
     return data;
   }
+
+  Future<bool> setTempBirthLocation(String userinputlocation) async {
+    print('Composerwithdart: setTempBirthLocation');
+    PlaceLocation geoloc =
+        await GeoCoderHelper.getlocationData(userinputlocation);
+    if (geoloc.latitude > -100) {
+      print('Composerwithdart: setTempBirthLocation create new Details');
+
+      Details newdetails = new Details(
+          category: details == null ? "dummy" : details.category,
+          subcategory: details == null ? "dummy" : details.category,
+          dateofbirth: details == null ? "dummy" : details.dateofbirth,
+          placeofbirth:
+              geoloc.address.length == null ? "unknown" : geoloc.address,
+          birthlatlng:
+              Birthlatlng(lat: geoloc.latitude, long: geoloc.longitude),
+          dateofdeath: details == null ? "dummy" : details.dateofdeath,
+          placeofdeath: details == null ? "unknown" : details.placeofdeath,
+          deathlatlng: details == null
+              ? Deathlatlng(lat: -800.0, long: -800.0)
+              : Deathlatlng(lat: -800.0, long: -800.0),
+          bio: details == null ? ['dummy'] : details.bio,
+          youtubelinks: details == null ? ['dummy'] : details.youtubelinks,
+          textlinks: details == null ? ['dummy'] : details.textlinks);
+
+      this.details = newdetails;
+      return true;
+    } else {
+      print('Composerwithdart: setTempBirthLocation cannot get a geoloc');
+      return false;
+    }
+  }
 }
+/*
+Future<bool> setTempDeathLocation(String userinputlocation) async {
+    print('Composerwithdart: setTempBirthLocation');
+    PlaceLocation geoloc =
+        await GeoCoderHelper.getlocationData(userinputlocation);
+    if (geoloc.latitude > -100) {
+      print('Composerwithdart: setTempBirthLocation create new Details');
+
+      Details newdetails = new Details(
+          category: details == null ? "dummy" : details.category,
+          subcategory: details == null ? "dummy" : details.category,
+          dateofbirth: details == null ? "dummy" : details.dateofbirth,
+          placeofbirth:
+              geoloc.address.length == null ? "unknown" : geoloc.address,
+          birthlatlng:
+              Birthlatlng(lat: geoloc.latitude, long: geoloc.longitude),
+          dateofdeath: details == null ? "dummy" : details.dateofdeath,
+          placeofdeath: details == null ? "unknown" : details.placeofdeath,
+          deathlatlng: details == null
+              ? Deathlatlng(lat: -800.0, long: -800.0)
+              : Deathlatlng(lat: -800.0, long: -800.0),
+          bio: details == null ? ['dummy'] : details.bio,
+          youtubelinks: details == null ? ['dummy'] : details.youtubelinks,
+          textlinks: details == null ? ['dummy'] : details.textlinks);
+
+      this.details = newdetails;
+      return true;
+    } else {
+      print('Composerwithdart: setTempBirthLocation cannot get a geoloc');
+      return false;
+    }
+  }
+}
+
+*/
+
+
+
+
+
+
+
 
 class Details {
   String category;
@@ -80,14 +158,12 @@ class Details {
       });
     }
 
-   if (json['textlinks'] != null) {
+    if (json['textlinks'] != null) {
       textlinks = new List<String>();
       json['textlinks'].forEach((v) {
         textlinks.add(v);
       });
     }
-
-
   }
 
   Map<String, dynamic> toJson() {
