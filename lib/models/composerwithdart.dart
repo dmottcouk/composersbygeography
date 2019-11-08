@@ -97,10 +97,6 @@ Future<bool> setTempDeathLocation(String userinputlocation) async {
 
 
 
-
-
-
-
 class Details {
   String category;
   String subcategory;

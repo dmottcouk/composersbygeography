@@ -7,6 +7,8 @@ import '../models/placelocation.dart';
 import '../providers/composer_provider.dart';
 import './map_screen.dart';
 
+// note : this needs refactoring
+
 class EnterComposerScreen extends StatefulWidget {
   static const routeName = '/entercomposer';
 
@@ -53,7 +55,7 @@ class _EnterComposerScreenState extends State<EnterComposerScreen> {
     _birthplaceinfobuttonenabled = false;
     _deathplaceinfobuttonenabled = false;
 
-    //_birthlocationFocusNode.addListener(_updatebirthlocinfo);
+    //_birthlocationFocusNode.addListener(_updatebirthlocinfo); in max lecture 221 he adds listener to the FocusNode not the controller ?
     _birthplaceController.addListener(_updatebirthlocinfo);
     _deathplaceController.addListener(_updatedeathlocinfo);
     super.initState();
@@ -61,6 +63,8 @@ class _EnterComposerScreenState extends State<EnterComposerScreen> {
 
   @override
   void dispose() {
+    _birthplaceController.removeListener(_updatebirthlocinfo);
+    _deathplaceController.removeListener(_updatedeathlocinfo);
     _firstnameFocusNode.dispose();
     _subcatFocusNode.dispose();
     _dobFocusNode.dispose();
@@ -98,6 +102,16 @@ class _EnterComposerScreenState extends State<EnterComposerScreen> {
     }
   }
 
+  void _saveForm(ComposerProvider cp) {
+    print('SaveForm entered');
+    final isValid = _form.currentState.validate();
+    if (isValid) {
+      _form.currentState.save();
+      cp.setComposerCategory(_selectedCategory.name);
+      cp.saveToBackEnd();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final devicewidth = MediaQuery.of(context).size.width;
@@ -115,9 +129,13 @@ class _EnterComposerScreenState extends State<EnterComposerScreen> {
             height: deviceheight, width: devicewidth, fit: BoxFit.cover),
         Scaffold(
           backgroundColor: Colors.white54,
-          appBar: AppBar(
-            title: Text('Enter composer'),
-          ),
+          appBar: AppBar(title: Text('Enter composer'), actions: <Widget>[
+            IconButton(
+                icon: Icon(Icons.save),
+                onPressed: () {
+                  _saveForm(compProvider);
+                })
+          ]),
           body: Container(
             child: SingleChildScrollView(
               child: Column(
@@ -170,7 +188,19 @@ class _EnterComposerScreenState extends State<EnterComposerScreen> {
                                   FocusScope.of(context)
                                       .requestFocus(_firstnameFocusNode);
                                 },
-                                onSaved: (value) {}),
+                                // if validator returns null there is no error
+                                // if you return text it is treated as erro text
+                                // you can configure the error style in the InputDecoration widget
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'Please provide a Surname';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  compProvider.setComposerSurName(value);
+                                  print('Surname saved');
+                                }),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
@@ -187,7 +217,16 @@ class _EnterComposerScreenState extends State<EnterComposerScreen> {
                                         FocusScope.of(context)
                                             .requestFocus(_subcatFocusNode);
                                       },
-                                      onSaved: (value) {}),
+                                      validator: (value) {
+                                        if (value.isEmpty) {
+                                          return ('Enter first and any middle names');
+                                        }
+                                        return null;
+                                      },
+                                      onSaved: (value) {
+                                        compProvider.setComposerDOD(value);
+                                        print('First names saved');
+                                      }),
                                 ),
                                 Expanded(
                                   flex: 1,
@@ -220,7 +259,16 @@ class _EnterComposerScreenState extends State<EnterComposerScreen> {
                                           FocusScope.of(context)
                                               .requestFocus(_dobFocusNode);
                                         },
-                                        onSaved: (value) {}),
+                                        validator: (value) {
+                                          if (value.isEmpty) {
+                                            return ('Enter subCategory');
+                                          }
+                                          return null;
+                                        },
+                                        onSaved: (value) {
+                                          compProvider.setComposersubCategory(value);
+                                          print('Subcategory saved');
+                                        }),
                                   ),
                                   Expanded(
                                     flex: 1,
@@ -254,7 +302,16 @@ class _EnterComposerScreenState extends State<EnterComposerScreen> {
                                         FocusScope.of(context).requestFocus(
                                             _birthlocationFocusNode);
                                       },
-                                      onSaved: (value) {}),
+                                      validator: (value) {
+                                        if (value.isEmpty) {
+                                          return ('Enter Date of Birth (use circa if needed)');
+                                        }
+                                        return null;
+                                      },
+                                      onSaved: (value) {
+                                        compProvider.setComposerDOB(value);
+                                        print('DOB saved');
+                                      }),
                                 ),
                                 Expanded(
                                   flex: 1,
@@ -377,7 +434,16 @@ class _EnterComposerScreenState extends State<EnterComposerScreen> {
                                   FocusScope.of(context)
                                       .requestFocus(_deathlocationFocusNode);
                                 },
-                                onSaved: (value) {}),
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'Enter Date of Death (use circa if needed)';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  compProvider.setComposerDOD(value);
+                                  print('DOD saved');
+                                }),
                             _buildDeathLocationWidget(compProvider),
                             TextFormField(
                                 decoration: InputDecoration(labelText: 'Bio'),
@@ -391,37 +457,70 @@ class _EnterComposerScreenState extends State<EnterComposerScreen> {
                                 onFieldSubmitted: (_) {
                                   FocusScope.of(context)
                                       .requestFocus(_youtubeFocusNode);
+                                },
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'Enter interesting facts';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  compProvider.setComposerbio(value);
+                                  print('Bio saved');
                                 }),
                             TextFormField(
-                              decoration:
-                                  //InputDecoration(labelText: 'YoutubeLinks', hintText: 'http://youtube.com/watch?'),
-                                  InputDecoration(labelText: 'YoutubeLinks'),
-                              // this controls what the submit action of the soft keyboard input does
-                              //
-                              // dont use textInputAction for multiLines ... or onFieldSubmitted
-                              // textInputAction: TextInputAction.next,
-                              focusNode: _youtubeFocusNode,
-                              maxLines: 3,
-                              keyboardType: TextInputType.multiline,
-                              //controller: _youtubelinksController,
-                              initialValue: 'http://youtube.com/watch?',
+                                decoration:
+                                    //InputDecoration(labelText: 'YoutubeLinks', hintText: 'http://youtube.com/watch?'),
+                                    InputDecoration(labelText: 'YoutubeLinks'),
+                                // this controls what the submit action of the soft keyboard input does
+                                //
+                                // dont use textInputAction for multiLines ... or onFieldSubmitted
+                                // textInputAction: TextInputAction.next,
+                                focusNode: _youtubeFocusNode,
+                                maxLines: 3,
+                                keyboardType: TextInputType.multiline,
+                                //controller: _youtubelinksController,
+                                initialValue: 'http://youtube.com/watch?',
+                                validator: (value) {
+                                  List<String> ytarray = value.split('?');
+                                  if ((value.isEmpty) ||
+                                      (ytarray[1].length == 0)) {
+                                    return 'Enter youtube links';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  //List <String> ytarray = value.split('?');
+                                  //print('tyarray len ${ytarray.length}, ${ytarray[1].length}');
+                                  compProvider.setComposeryoutubelinks(value);
+                                  print('Youtube links saved');
+                                }
 
-                              //
-                              // onFieldSubmitted: (_) {
-                              //   FocusScope.of(context)
-                              //       .requestFocus(_textLinksFocusNode);
-                              // }),
-                            ),
+                                //
+                                // onFieldSubmitted: (_) {
+                                //   FocusScope.of(context)
+                                //       .requestFocus(_textLinksFocusNode);
+                                // }),
+                                ),
                             TextFormField(
-                              decoration:
-                                  InputDecoration(labelText: 'textLinks'),
-                              // this controls what the submit action of the soft keyboard input does
-                              //
-                              //textInputAction: TextInputAction.next,
-                              maxLines: 3,
-                              keyboardType: TextInputType.multiline,
-                              focusNode: _textLinksFocusNode,
-                            )
+                                decoration:
+                                    InputDecoration(labelText: 'textLinks'),
+                                // this controls what the submit action of the soft keyboard input does
+                                //
+                                //textInputAction: TextInputAction.next,
+                                maxLines: 3,
+                                keyboardType: TextInputType.multiline,
+                                focusNode: _textLinksFocusNode,
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'Enter text links';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  compProvider.setComposertextlinks(value);
+                                  print('Internet links saved');
+                                })
                             //
                             // onFieldSubmitted: (_) {}),
                           ]),
@@ -448,19 +547,30 @@ class _EnterComposerScreenState extends State<EnterComposerScreen> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(4.0),
-              child: TextFormField(
-                  decoration: InputDecoration(labelText: 'BirthLocation'),
+              child: Consumer<ComposerProvider>(
+                builder: (ctx, cp, _) => TextFormField(
+                    decoration: InputDecoration(labelText: 'BirthLocation'),
 
-                  // this controls what the submit action of the soft keyboard input does
-                  //
-                  textInputAction: TextInputAction.next,
-                  controller: _birthplaceController,
-                  focusNode: _birthlocationFocusNode,
-                  //
-                  onFieldSubmitted: (_) {
-                    FocusScope.of(context).requestFocus(_dodFocusNode);
-                  },
-                  onSaved: (value) {}),
+                    // this controls what the submit action of the soft keyboard input does
+                    //
+                    textInputAction: TextInputAction.next,
+                    controller: _birthplaceController,
+                    focusNode: _birthlocationFocusNode,
+                    //
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(_dodFocusNode);
+                    },
+                    validator: (value) {
+                      if ((!cp.birthlocgeolocresult) ||
+                          (_birthplaceinfobuttonenabled == false)) {
+                        return ('Please establish birth geolocation');
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      print('BirthLocation saved');
+                    }),
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -528,19 +638,30 @@ class _EnterComposerScreenState extends State<EnterComposerScreen> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(4.0),
-              child: TextFormField(
-                  decoration: InputDecoration(labelText: 'DeathLocation'),
+              child: Consumer<ComposerProvider>(
+                builder: (ctx, cp, _) => TextFormField(
+                    decoration: InputDecoration(labelText: 'DeathLocation'),
 
-                  // this controls what the submit action of the soft keyboard input does
-                  //
-                  textInputAction: TextInputAction.next,
-                  controller: _deathplaceController,
-                  focusNode: _deathlocationFocusNode,
-                  //
-                  onFieldSubmitted: (_) {
-                    FocusScope.of(context).requestFocus(_bioFocusNode);
-                  },
-                  onSaved: (value) {}),
+                    // this controls what the submit action of the soft keyboard input does
+                    //
+                    textInputAction: TextInputAction.next,
+                    controller: _deathplaceController,
+                    focusNode: _deathlocationFocusNode,
+                    //
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(_bioFocusNode);
+                    },
+                    validator: (value) {
+                      if ((!cp.deathlocgeolocresult) ||
+                          (_deathplaceinfobuttonenabled == false)) {
+                        return ('Please establish death geolocation');
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      print('DeathLocation saved');
+                    }),
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
