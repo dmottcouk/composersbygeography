@@ -2,7 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../models/composerwithdart.dart';
+//import '../models/composerwithdart.dart';
+import '../models/composercatwithdart.dart';
 import '../models/placelocation.dart';
 
 import '../helpers/geocoder_helper.dart';
@@ -22,18 +23,19 @@ import '../helpers/geocoder_helper.dart';
 */
 
 class ComposerProvider extends ChangeNotifier {
-  ComposerWithDart _composer;
+  //ComposerWithDart _composer;
+  ComposerCatWithDart _composer;
   bool _birthlocgeolocresult = false;
   bool _deathlocgeolocresult = false;
   PlaceLocation _birthlocation;
   PlaceLocation _deathlocation;
 
   void initComposer() {
-    ComposerWithDart thecomposer = new ComposerWithDart(
+    ComposerCatWithDart thecomposer = new ComposerCatWithDart(
         surname: null,
         firstnames: null,
-        details: Details(
-            category: "",
+        cat: null,
+        details2: Details2(
             subcategory: "",
             dateofbirth: "",
             placeofbirth: "",
@@ -54,6 +56,10 @@ class ComposerProvider extends ChangeNotifier {
       _birthlocgeolocresult = true;
       print('ComposerProvider: birthlocgeoresult = $_birthlocgeolocresult');
       _birthlocation = geoloc;
+      print('ComposerProvider: bloc address = ${_birthlocation.address}');
+      print('ComposerProvider: bloc lat = ${_birthlocation.latitude}');
+      print('ComposerProvider: bloc long = ${_birthlocation.longitude}');
+
       notifyListeners();
     }
   }
@@ -65,6 +71,10 @@ class ComposerProvider extends ChangeNotifier {
       _deathlocgeolocresult = true;
       print('ComposerProvider: deathlocgeoresult = $_deathlocgeolocresult');
       _deathlocation = geoloc;
+      print('ComposerProvider: dloc address = ${_deathlocation.address}');
+      print('ComposerProvider: dloc lat = ${_deathlocation.latitude}');
+      print('ComposerProvider: dloc long = ${_deathlocation.longitude}');
+
       notifyListeners();
     }
   }
@@ -83,61 +93,64 @@ class ComposerProvider extends ChangeNotifier {
   void setComposerCategory(String category) {
     print('Setting category as $category');
     initComposer();
-    _composer.details.category = category;
+    _composer.cat = category;
   }
 
   void setComposersubCategory(String subCategory) {
     initComposer();
-    _composer.details.subcategory = subCategory;
+    _composer.details2.subcategory = subCategory;
   }
 
   void setComposerDOB(String dob) {
     initComposer();
-    _composer.details.dateofbirth = dob;
+    _composer.details2.dateofbirth = dob;
   }
 
   void setComposerPlaceOfBirth() {
     initComposer();
-    _composer.details.placeofbirth = _birthlocation.address;
+    print('setComposerPlaceOfBirth = ${_birthlocation.address}');
+    _composer.details2.placeofbirth = _birthlocation.address;
   }
 
   void setComposerBirthLatLng() {
     initComposer();
-    _composer.details.birthlatlng = Birthlatlng(
+    _composer.details2.birthlatlng = Birthlatlng(
         lat: _birthlocation.latitude, long: _birthlocation.longitude);
   }
 
   void setComposerDOD(String dod) {
     initComposer();
-    _composer.details.dateofdeath = dod;
+    _composer.details2.dateofdeath = dod;
   }
 
   void setComposerPlaceOfDeath() {
     initComposer();
-    _composer.details.placeofdeath = _deathlocation.address;
+    print('setComposerPlaceOfDeath = ${_deathlocation.address}');
+    _composer.details2.placeofdeath = _deathlocation.address;
   }
 
   void setComposerDeathLatLng() {
     initComposer();
-    _composer.details.placeofdeath = _deathlocation.address;
+    _composer.details2.deathlatlng = Deathlatlng(
+        lat: _deathlocation.latitude, long: _deathlocation.longitude);
   }
 
   void setComposerbio(String bio) {
     initComposer();
     LineSplitter ls = new LineSplitter();
-    _composer.details.bio = ls.convert(bio);
+    _composer.details2.bio = ls.convert(bio);
   }
 
   void setComposeryoutubelinks(String youtubelinks) {
     initComposer();
     LineSplitter ls = new LineSplitter();
-    _composer.details.youtubelinks = ls.convert(youtubelinks);
+    _composer.details2.youtubelinks = ls.convert(youtubelinks);
   }
 
   void setComposertextlinks(String textlinks) {
     initComposer();
     LineSplitter ls = new LineSplitter();
-    _composer.details.textlinks = ls.convert(textlinks);
+    _composer.details2.textlinks = ls.convert(textlinks);
   }
 
 /*
@@ -192,8 +205,8 @@ class ComposerProvider extends ChangeNotifier {
   void saveToBackEnd() async {
     //save the composer to the database
     print('Save composer to backend');
-    final url =
-        'https://https://britishcomposers-6447e.firebaseio.com//composers.json';
+    final url = 'https://britishcomposers-6447e.firebaseio.com/composers.json';
+
     //encode knows how to convert maps to json !!
     // if you use async you wrap all the code into a future so you would not need the return on http
     //return http
@@ -204,24 +217,25 @@ class ComposerProvider extends ChangeNotifier {
         body: json.encode({
           'surname': _composer.surname,
           'firstnames': _composer.firstnames,
+          'cat': _composer.cat,
           'details': {
-            'bio': _composer.details.bio,
-            'category': _composer.details.category,
+            'bio': _composer.details2.bio,
+            //'category': _composer.details2.category,
+            'subcategory': _composer.details2.subcategory,
             'birthlatlng': {
-              'lat': _composer.details.birthlatlng.lat,
-              'long': _composer.details.birthlatlng.long
+              'lat': _composer.details2.birthlatlng.lat,
+              'long': _composer.details2.birthlatlng.long
             },
-
-            'dateofbirth': _composer.details.dateofbirth,
-            'placeofbirth': _composer.details.placeofbirth,
+            'dateofbirth': _composer.details2.dateofbirth,
+            'placeofbirth': _composer.details2.placeofbirth,
             'deathlatlng': {
-              'lat': _composer.details.deathlatlng.lat,
-              'long': _composer.details.deathlatlng.long
+              'lat': _composer.details2.deathlatlng.lat,
+              'long': _composer.details2.deathlatlng.long
             },
-            'dateofdeath': _composer.details.dateofdeath,
-            'placeofdeath': _composer.details.placeofdeath,
-            'textlinks':  _composer.details.textlinks,
-            'youtubelinks': _composer.details.youtubelinks
+            'dateofdeath': _composer.details2.dateofdeath,
+            'placeofdeath': _composer.details2.placeofdeath,
+            'textlinks': _composer.details2.textlinks,
+            'youtubelinks': _composer.details2.youtubelinks
           }
         }),
       );
@@ -234,6 +248,9 @@ class ComposerProvider extends ChangeNotifier {
       //);
       // _items.add(newProduct);
       //_items.insert(0, newProduct);
+
+      print(json.decode(response.body));
+
       notifyListeners();
       // note we could send this to the analytics server
       //})

@@ -224,7 +224,7 @@ class _EnterComposerScreenState extends State<EnterComposerScreen> {
                                         return null;
                                       },
                                       onSaved: (value) {
-                                        compProvider.setComposerDOD(value);
+                                        compProvider.setComposerFirstNames(value);
                                         print('First names saved');
                                       }),
                                 ),
@@ -568,6 +568,8 @@ class _EnterComposerScreenState extends State<EnterComposerScreen> {
                       return null;
                     },
                     onSaved: (value) {
+                      compProvider.setComposerPlaceOfBirth();
+                      compProvider.setComposerBirthLatLng();
                       print('BirthLocation saved');
                     }),
               ),
@@ -659,6 +661,8 @@ class _EnterComposerScreenState extends State<EnterComposerScreen> {
                       return null;
                     },
                     onSaved: (value) {
+                      compProvider.setComposerPlaceOfDeath();
+                      compProvider.setComposerDeathLatLng();
                       print('DeathLocation saved');
                     }),
               ),
