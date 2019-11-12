@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../helpers/categoriesdescriptions.dart';
+import './category_composerlist_screen.dart';
 
 class CategoriesDescriptionScreen extends StatelessWidget {
   static const routeName = '/categorydescription';
@@ -38,11 +39,37 @@ class CategoriesDescriptionScreen extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 width: double.infinity,
-                child: Text(
-                  CategoriesDescriptions.getCategoryDescription(category)
-                      .join('\n'),
-                  textAlign: TextAlign.center,
-                  softWrap: true,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 20),
+                      width: double.infinity,
+                      //color: Colors.green,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: IconButton(
+                        icon: Icon(Icons.list),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                             CategoryComposerListScreen.routeName,
+                            arguments: category,
+                          );
+
+
+
+                        },
+                      ),
+                    ),
+                    Text(
+                      CategoriesDescriptions.getCategoryDescription(category)
+                          .join('\n'),
+                      textAlign: TextAlign.center,
+                      softWrap: true,
+                    ),
+                  ],
                 ),
               ),
             ]),

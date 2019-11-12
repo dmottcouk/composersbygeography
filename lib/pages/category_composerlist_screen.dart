@@ -1,29 +1,26 @@
-// This lists all the composers - no styling yet
-
-
+import 'package:composersbygeography/providers/composers_provider.dart';
+import 'package:composersbygeography/widgets/composer_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/composerwithdart.dart';
-import '../providers/composers_provider.dart';
-import '../widgets/composer_item.dart';
 
-class ComposersListScreen extends StatelessWidget {
+class CategoryComposerListScreen extends StatelessWidget {
+  static const routeName = '/categorycomposerslistscreen';
 
-  static const routeName = '/composersscreen';
+  // final String categoryname;
 
- 
-
-  ComposersListScreen();
+  // CategoryComposerListScreen(this.categoryname);
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    final categoryname = ModalRoute.of(context).settings.arguments as String;
+
+    return Scaffold(
       appBar: AppBar(
-        title: Text('Composers'),
+        title: Text('$categoryname'),
       ),
       body: FutureBuilder(
           future:
-              Provider.of<ComposersProvider>(context, listen: false).fetchAndSetComposers(),
+              Provider.of<ComposersProvider>(context, listen: false).fetchAndSetComposersByCatFilter(categoryname),
           builder: (ctx, dataSnapshot) {
             if (dataSnapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
@@ -36,14 +33,13 @@ class ComposersListScreen extends StatelessWidget {
               } else {
                 return Consumer<ComposersProvider>(
                   builder: (ctx, composersData, child) => ListView.builder(
-                    itemCount: composersData.composers.length,
-                    itemBuilder: (ctx, i) => ComposerItem(composersData.composers[i]),
+                    itemCount: composersData.filteredcomposers.length,
+                    itemBuilder: (ctx, i) => ComposerItem(composersData.filteredcomposers[i]),
                   ),
                 );
               }
             }
           })
-
     );
   }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import '../models/composerwithdart.dart';
+import '../models/composercatwithdart.dart';
+
+//import '../models/composerwithdart.dart';
 
 class ComposerItem extends StatelessWidget {
-  final ComposerWithDart composer;
+  final ComposerCatWithDart composer;
 
   ComposerItem(this.composer);
 

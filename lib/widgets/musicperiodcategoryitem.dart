@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import '../pages/categories_description_screen.dart';
-
+import '../pages/category_composerlist_screen.dart';
 
 class MusicPeriodCategoryItem extends StatelessWidget {
   final String categorytitle;
@@ -37,7 +37,7 @@ class MusicPeriodCategoryItem extends StatelessWidget {
           ),
           footer: GridTileBar(
             backgroundColor: Colors.black45,
-           // leading: IconButton(icon: Icon(Icons.info), onPressed: () {}),
+            // leading: IconButton(icon: Icon(Icons.info), onPressed: () {}),
             title: Text(
               categorytitle,
               style: screenwidth > 600
@@ -45,6 +45,17 @@ class MusicPeriodCategoryItem extends StatelessWidget {
                   : TextStyle(fontSize: 12),
               textAlign: TextAlign.center,
             ),
+            //trailing: IconButton(
+            //  iconSize: 12,
+           //   icon: Icon(Icons.list),
+            //  color: Colors.green,
+            //  onPressed: () {
+            //    Navigator.of(context).pushNamed(
+           //       CategoryComposerListScreen.routeName,
+            //      arguments: categorytitle,
+            //    );
+            //  },
+            //),
           ),
         ),
       ),

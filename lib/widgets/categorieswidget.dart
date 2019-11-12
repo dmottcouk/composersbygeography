@@ -40,7 +40,7 @@ class CategoriesWidget extends StatelessWidget {
           itemBuilder: (ctx, i) =>
               MusicPeriodCategoryItem(cats[i]['cat'], cats[i]['pic']),
           // squeeze the columns to get this amount of columns
-          // children are a bit taller than they are wide = 3/2
+          // children are a bit wider than tall = 3/2
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             childAspectRatio: 3 / 2, // first number is width

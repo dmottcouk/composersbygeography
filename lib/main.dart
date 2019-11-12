@@ -1,4 +1,5 @@
 
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './providers/composers_provider.dart';
@@ -8,6 +9,7 @@ import './pages/categories_description_screen.dart';
 import './pages/composerslist_screen.dart';
 import './pages/enter_composer_screen.dart';
 import './pages/map_screen.dart';
+import './pages/category_composerlist_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -34,7 +36,8 @@ class MyApp extends StatelessWidget {
                 CategoriesDescriptionScreen(),
             ComposersListScreen.routeName: (ctx) => ComposersListScreen(),
             EnterComposerScreen.routeName: (ctx) => EnterComposerScreen(),
-            MapScreen.routeName: (ctx) => MapScreen()
+            MapScreen.routeName: (ctx) => MapScreen(),
+            CategoryComposerListScreen.routeName: (ctx) => CategoryComposerListScreen()
           }),
     );
   }

@@ -15,7 +15,7 @@ class ComposerCatWithDart {
     firstnames = json['firstnames'];
     cat = json['cat'];
     details2 =
-        json['details2'] != null ? new Details2.fromJson(json['details2']) : null;
+        json['details'] != null ? new Details2.fromJson(json['details']) : null;
   }
 
   Map<String, dynamic> toJson() {
